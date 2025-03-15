@@ -12,10 +12,10 @@ import os
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
-optimization = [ "FGOA"]
+optimization = ["FGOA"]
 for opt in optimization:
     file = f"{opt}_all_sel_stage.csv"
-    path = f'D:\\張\\TCGA-kirc5\\FGOA\\stage'
+    path = f'.\\FGOA\\stage'
     data = pd.read_csv(os.path.join(path, file))
     """data['Pharmaceutical treatment or therapy'] = data['treatments_pharmaceutical_treatment_or_therapy']
     data['Radiation treatment or therapy'] = data['treatments_radiation_treatment_or_therapy']

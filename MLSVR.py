@@ -24,15 +24,12 @@ def create_dataset(dataset, look_back, scaler_type='StandardScaler'):
     features = dataset.iloc[:, :-1]
     labels = dataset.iloc[:, -1]
     
-    # 標準化特徵數據
     features_scaled = scaler.fit_transform(features)
     
-    # 將標準化數據轉換回 DataFrame，與標籤合併
     dataset_scaled = pd.DataFrame(features_scaled, columns=features.columns)
     dataset_scaled['label'] = labels.values
     
     for i in range(len(dataset_scaled) - look_back):
-        # 選擇範圍內的特徵數據並轉換成數組
         dataX.append(dataset_scaled.iloc[i:(i + look_back), :-1].values)
         dataY.append(dataset_scaled.iloc[i + look_back, -1])
     return np.array(dataX), np.array(dataY)
@@ -60,10 +57,8 @@ for model, model_name in lstmmodel:
         features = label.iloc[:, :-1]
         labels = label.iloc[:, -1]
         
-        # 標準化特徵數據
         features_scaled = scaler.fit_transform(features)
-        
-        # 將標準化數據轉換回 DataFrame，與標籤合併
+
         dataset_scaled = pd.DataFrame(features_scaled, columns=features.columns)
         dataset_scaled['label'] = labels.values
 
@@ -76,25 +71,19 @@ for model, model_name in lstmmodel:
         tree_depth, tree_num, learning_rate = 10, 50, 0.001
         ml_instance = ML(X_train, X_test, y_train, y_test, tree_depth, tree_num, learning_rate,model_name)
         # CNN
-
         print('X_test:',X_test.shape)
         test_y_predicted, predictions= model(ml_instance)
 
 #=============================================================================================
-        #畫圖
         criteria = Evaluation_Criteria(y_train, y_test, bx, dx, path)
 
-        # 获取混淆结果并存储到 DataFrame
         confusion_result = criteria.confusion(test_y_predicted, predictions, f"{opt} {model_name}")
         
         # Convert confusion_result to DataFrame
         result_df = pd.DataFrame(confusion_result)  # Wrap confusion_result in a list
-        #print("result_df", result_df.shape)
-        
+
         # Append the DataFrame to all_df
         all_df.append(result_df)
-        #plt.rcParams['font.family'] = 'Times New Roman'
-        # Plot settings
         bx.set_xlabel('Recall', fontsize=20, family = 'Times New Roman')
         bx.set_ylabel('Precision', fontsize=20, family = 'Times New Roman')
         bx.set_title('Precision-Recall Curve', fontsize=25, family = 'Times New Roman')
@@ -102,7 +91,7 @@ for model, model_name in lstmmodel:
         dx.set_xlabel('False Positive Rate', fontsize=20, family = 'Times New Roman')
         dx.set_ylabel('True Positive Rate', fontsize=20, family = 'Times New Roman')
 
-        bx.plot([0, 1], [1, 0], lw=2, c='k', linestyle='--')  # 绘制参考线
+        bx.plot([0, 1], [1, 0], lw=2, c='k', linestyle='--')
         dx.plot([0, 1], [0, 1], lw=2, c='k', linestyle='--')
 
         bx.legend(fontsize = 15)
@@ -116,7 +105,6 @@ for model, model_name in lstmmodel:
 final_df = pd.concat(all_df, axis=0, ignore_index=True)
 final_df.to_csv(os.path.join(path, f'table5 {model_name} stage.csv'), index=False)
 
-# 绘制热图
 criteria.Heatmap(final_df, [f'{model_name}', f"GA {model_name}", f"PSO {model_name}", f"DE {model_name}", f"WOA {model_name}", 
                             f"HHO {model_name}", f"SMA {model_name}", f"FGOA {model_name}"])
 print(final_df)
