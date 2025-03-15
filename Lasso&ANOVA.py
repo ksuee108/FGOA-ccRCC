@@ -8,7 +8,7 @@ from scipy.stats import norm
 import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
-path = 'D:\\張\\TCGA-kirc5\\'
+path = 'C:\\Users\\user\\OneDrive - 國立高雄科技大學\\文件\\GitHub\\FGOA-ccRCC\\'
 # load data
 data = pd.read_csv(os.path.join(path, 'cleaned_file_stage.csv'))
 counts_df = data.set_index('submitter_id')

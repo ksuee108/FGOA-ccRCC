@@ -1,3 +1,0 @@
-Model,Accuracy,Precision,Sensitivity,Specificity,TPR,FNR,FPR,TNR,F1 score,"""Pearsonr correlation"":correlation,
-            ""P vale"":p_value,Gain"
-original LGBM,0.7068965517241379,0.7241379310344828,0.7,0.7142857142857143,0.7,0.3,0.2857142857142857,0.7142857142857143,0.711864406779661,0.5392857142857144

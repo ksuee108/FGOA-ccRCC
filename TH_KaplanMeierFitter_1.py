@@ -36,13 +36,6 @@ for col in with_out_os_time.columns:
             
             kmf.fit(durations=group_2['os_time'], event_observed=group_2['os'], label=f"not reported")
             kmf.plot_survival_function(ax=ax, ci_show=True, color='red')
-            
-            print("group_3 数据类型：")
-            print(group_3.dtypes)
-            print("\ngroup_3 缺失值统计：")
-            print(group_3.isnull().sum())
-            print("\ngroup_3 数据示例：")
-            print(group_3.head())
 
             kmf.fit(durations=group_3['os_time'], event_observed=group_3['os'], label=f"Yes")
             kmf.plot_survival_function(ax=ax, ci_show=True)
