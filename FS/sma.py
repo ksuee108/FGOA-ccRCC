@@ -7,7 +7,7 @@ Created on Tue Jun 25 14:42:56 2024
 
 import numpy as np
 from numpy.random import rand
-from FS.functionHO_gpu import Fun
+from FS.functionHO import Fun
 
 def init_position(lb, ub, N, dim):
     print(f"N: {N}, dim: {dim}")

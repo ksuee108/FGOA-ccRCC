@@ -5,7 +5,7 @@ from fancyimpute import IterativeImputer
 # Read CSV files
 file_mutation = "Mutation_TCGA-KIRC.csv"
 file_clinical = "Clinical_TCGA-KIRC.csv"
-path = ".\FGOA-ccRcc"
+path = r"C:\Users\user\OneDrive - 國立高雄科技大學\文件\GitHub\FGOA-ccRCC"
 
 df_mutation = pd.read_csv(os.path.join(path, file_mutation))
 df_clinical = pd.read_csv(os.path.join(path, file_clinical))
@@ -20,7 +20,6 @@ def combine_data(mutation_cleaned, clinical_cleaned):
     combin = pd.merge(clinical_cleaned, mutation_cleaned, left_on='bcr_patient_barcode', right_on='Barcode', how='inner')
     combin = combin.drop(columns=['bcr_patient_barcode','Barcode'])
     combin = combin.dropna()
-    combin.to_csv('.\\combination2.csv', index=False)  # Added .csv extension
     return combin
 
 # Continue with the rest of your code as before...
@@ -32,9 +31,6 @@ class Clinical:
         combin['agegroup'] = ''
         combin['pharmaceutical_treatment'] = ''
         combin['radiation_treatment'] = ''
-        combin['T_stage'] = ''
-        combin['M_stage'] = ''
-        combin['N_stage'] = ''
         combin['os']=''
 
         gender = combin.groupby('gender').size()
@@ -191,8 +187,8 @@ mutation_instance = Mutation()
 clinical_cleaned = clinical_instance.clean(df_clinical)
 print(clinical_instance)
 imputer = IterativeImputer(max_iter=10, random_state=0)
-clinical_cleaned['treatments_pharmaceutical_treatment_or_therapy'] = imputer.fit_transform(clinical_cleaned[['treatments_pharmaceutical_treatment_or_therapy']])
-clinical_cleaned['treatments_radiation_treatment_or_therapy'] = imputer.fit_transform(clinical_cleaned[['treatments_radiation_treatment_or_therapy']])
+clinical_cleaned['Pharmaceutical treatment or therapy'] = imputer.fit_transform(clinical_cleaned[['treatments_pharmaceutical_treatment_or_therapy']])
+clinical_cleaned['Radiation treatment or therapy'] = imputer.fit_transform(clinical_cleaned[['treatments_radiation_treatment_or_therapy']])
 
 mutation_cleaned = mutation_instance.clan(df_mutation)
 mutation_cleaned.to_csv(os.path.join(path, 'mutation_cleaned_test2.csv'), index=False)
@@ -207,18 +203,10 @@ print(clinical_cleaned)
 print(data.columns)
 data.to_csv(os.path.join(path, 'test2.csv'), index=False)
 
-select_column = data[['submitter_id', 'gender', 'treatments_pharmaceutical_treatment_or_therapy', 'treatments_radiation_treatment_or_therapy',
+select_column = data[['submitter_id', 'gender', 'Pharmaceutical treatment or therapy', 'Radiation treatment or therapy',
                       'age', 'ajcc_pathologic_stage', 't_depth', 't_alt_count', 'CLIN_SIG', 'hotspot', 'SIFT', 'PolyPhen', 
                       'os', 'os_time']]
 select_column = select_column.dropna()
 
 select_column.to_csv(os.path.join(path, 'cleaned_file_stage.csv'), index=False)
-select_column.to_csv( ".\\original/stage/cleaned_file_stage.csv", index=False)
-
-select_column = data[['submitter_id', 'gender', 'race', 'treatments_pharmaceutical_treatment_or_therapy', 'treatments_radiation_treatment_or_therapy', 'agegroup',
-                      'age', 'ajcc_t', 'ajcc_pathologic_m', 'ajcc_pathologic_n', 't_depth', 't_ref_count', 't_alt_count', 'n_depth', 'BIOTYPE', 'CLIN_SIG', 
-                      'hotspot', 'SIFT', 'PolyPhen', 'os', 'os_time']]
-select_column = select_column.dropna()
-
-select_column.to_csv(os.path.join(path, 'cleaned_file_TMN.csv'), index=False)
-select_column.to_csv( ".\\original/TMN/cleaned_file_TMN.csv", index=False)
+select_column.to_csv( os.path.join(path, "original/stage/cleaned_file_stage.csv"), index=False)

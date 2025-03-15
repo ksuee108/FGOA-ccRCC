@@ -2,7 +2,7 @@
 
 import numpy as np
 from numpy.random import rand
-from FS.functionHO_gpu import Fun
+from FS.functionHO import Fun
 
 
 def init_position(lb, ub, N, dim):

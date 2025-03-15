@@ -10,7 +10,7 @@ from numpy.random import rand
 import random
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
-from FS.functionHO_gpu import Fun  # 假設這是適應度函數的導入
+from FS.functionHO import Fun  # 假設這是適應度函數的導入
 
 class Goose:
     def __init__(self, dim, minx, maxx, best_position=None, updrafts=None):

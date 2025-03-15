@@ -1,0 +1,3 @@
+Model,Accuracy,Precision,Sensitivity,Specificity,TPR,FNR,FPR,TNR,F1 score,"""Pearsonr correlation"":correlation,
+            ""P vale"":p_value,Gain"
+original GBDT,0.7413793103448276,0.7777777777777778,0.7,0.7857142857142857,0.7,0.3,0.21428571428571427,0.7857142857142857,0.7368421052631579,0.5119047619047619

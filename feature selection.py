@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from catboost import CatBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 std=StandardScaler()
@@ -23,12 +23,11 @@ if gpus:
     try:
         for gpu in gpus:
             tf.config.experimental.set_memory_growth(gpu, True)
-        print("已设置 GPU 内存动态增长。")
     except RuntimeError as e:
         print(e)
 
 os.environ["CUDA_VISIBLE_DEVICES"] = '0'
-path = 'D:\\張\\TCGA-kirc5\\'
+path = r"C:\Users\user\OneDrive - 國立高雄科技大學\文件\GitHub\FGOA-ccRCC"
 # load data
 data = pd.read_csv(os.path.join(path, 'cleaned_file_stage.csv'))#, encoding='big5'
 data=data.drop(["os_time","submitter_id"],axis=1)
@@ -40,10 +39,9 @@ smote = SMOTE(random_state=42)
 xtrain, ytrain = smote.fit_resample(xtrain, ytrain)
 
 result_file = 'classifier_clinical_results_stage.csv'
-feature_file = 'selected_clinical_features_stage.csv'
 
 # parameter
-k    = 0.001     # k-value in learning rate
+k    = 3    # k-value in learning rate
 N    = 50    # number of particles
 T    = 100   # maximum number of iterations
 w    = 0.9
@@ -56,29 +54,25 @@ z  = 0.1
 b  = 1    # constant
 
 fs_algorithms = {
-    
-    'FGOA': FGOA,
-}
-"""'GA': ga,
+    'GA': ga,
     'PSO': pso,
     'DE': de,
     'WOA': woa,
     'HHO': hho,
-    'SMA': sma,"""
+    'SMA': sma,
+    'FGOA': FGOA,
+}
 all_curves = {}
 
 def feature_selection_and_classification(model_name, model_pack):
-    """
-    執行特徵選擇、分類並保存結果。
-    """
     for j in range(50):
-        print("第",j,"次")
+        print(j,"Times")
         print(f"\n================== {model_name} ==================")
         folder_path = f'{path}\\convergence' 
         os.makedirs(folder_path, exist_ok=True)
         selected_features_list = []
 
-        # 特徵選擇
+        # feature selection
         fold = {'xt': xtrain, 'yt': ytrain, 'xv': xtest, 'yv': ytest}
         opts = {'k': k, 'fold': fold, 'N': N, 'T': T, 'b': b, 'lb': lb, 'ub': ub, 'w':w, 'vb':vb, 'z':z}
         if model_name!='FGOA':
@@ -91,15 +85,13 @@ def feature_selection_and_classification(model_name, model_pack):
         selected_features = feat.columns[sf].to_list()
         selected_features_list.append(selected_features)
 
-        # 模型訓練
+        # model training
         x_train, y_train = xtrain[:, sf], ytrain
         x_valid, y_valid = xtest[:, sf], ytest
-        model = CatBoostClassifier(verbose=0, learning_rate=k, n_estimators=100, depth=4, random_seed=42, task_type="GPU")
+        model = KNeighborsClassifier(n_neighbors = k)
         model.fit(x_train, y_train)
 
-        #print(convergence_curves)
-        
-        # 性能評估
+        # Criteria
         y_pred = model.predict(x_valid)
         results = {
             'Times': j + 1,
@@ -114,14 +106,10 @@ def feature_selection_and_classification(model_name, model_pack):
         }
         df = pd.DataFrame([results])
 
-        # 将数据保存为 CSV 文件
+        # save as csv
+        os.makedirs(os.path.join(path, f'{model_name}\\stage'), exist_ok=True)
         df.to_csv(os.path.join(path, f'{model_name}\\stage\\{result_file}'), mode='a', header=not os.path.exists(os.path.join(path, f'{model_name}\\stage\\{result_file}')), index=False)
-        flat_list = [item for sublist in selected_features_list for item in sublist]
-
-        df = pd.DataFrame(flat_list)
-        df.drop_duplicates().T
-        # 将数据保存为 CSV 文件
-        df.to_csv(os.path.join(path, f'{model_name}\\stage\\{feature_file}'), index=False)
 
 for model_name, model_path in fs_algorithms.items():
     feature_selection_and_classification(model_name, model_path)
+    
